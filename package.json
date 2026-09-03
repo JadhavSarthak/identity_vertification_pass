@@ -1,0 +1,14 @@
+{
+  "name": "digital-identity-verification",
+  "version": "1.0.0",
+  "description": "Secure, government-grade Digital Identity Verification web application with Flask backend and React frontend.",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "seed": "python backend/seed.py",
+    "backend": "python backend/app.py"
+  },
+  "keywords": ["identity", "verification", "flask", "react", "did", "security"],
+  "author": "Sarthak Jadhav",
+  "license": "MIT"
+}
