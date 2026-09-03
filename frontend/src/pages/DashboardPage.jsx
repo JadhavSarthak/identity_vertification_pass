@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import OfficialStamp from '../components/OfficialStamp';
+import { getQRCodeDataUrl } from '../utils/qrCode';
 
 export default function DashboardPage() {
   const { user, identity, document: doc, loading } = useAuth();
@@ -13,6 +14,7 @@ export default function DashboardPage() {
   }
 
   const status = identity?.verification_status || 'pending';
+  const qrUrl = identity?.did ? getQRCodeDataUrl(identity.did, 120) : null;
 
   return (
     <div className="page-container">
@@ -102,21 +104,40 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="certificate-stamp">
+          <div className="certificate-stamp" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
             <OfficialStamp status={status} />
+            {qrUrl && (
+              <div style={{ textAlign: 'center' }}>
+                <img src={qrUrl} alt="DID Verification QR Code" style={{ borderRadius: '6px', border: '1px solid var(--border)', padding: '4px', background: '#fff' }} />
+                <p className="mono" style={{ fontSize: '0.7rem', color: 'var(--ink-muted)', marginTop: '4px' }}>SCAN TO VERIFY</p>
+              </div>
+            )}
           </div>
         </div>
 
         <hr className="certificate-divider" />
 
-        <p className="text-center text-muted" style={{ fontSize: '0.8rem' }}>
-          {status === 'verified'
-            ? 'This credential is digitally verified and can be looked up via the public Verify Portal.'
-            : status === 'pending'
-            ? 'Your application is currently under review by an administrator.'
-            : 'Your application was not approved. Please contact support for further assistance.'}
-        </p>
+        <div className="flex-between align-center" style={{ flexWrap: 'wrap', gap: '1rem' }}>
+          <p className="text-muted" style={{ fontSize: '0.8rem', margin: 0, flex: 1 }}>
+            {status === 'verified'
+              ? 'This credential is digitally verified and can be looked up via the public Verify Portal.'
+              : status === 'pending'
+              ? 'Your application is currently under review by an administrator.'
+              : 'Your application was not approved. Please contact support for further assistance.'}
+          </p>
+
+          {status === 'verified' && (
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={() => window.print()}
+              style={{ flexShrink: 0 }}
+            >
+              &#128438; Print / Download Credential
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
