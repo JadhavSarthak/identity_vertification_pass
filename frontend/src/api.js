@@ -24,8 +24,14 @@ const STORAGE_KEY = 'secureid_demo_store_v2';
 function getStore() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) {
-    try { return JSON.parse(raw); } catch { }
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.users) && Array.isArray(parsed.identities) && Array.isArray(parsed.documents) && Array.isArray(parsed.logs)) {
+        return parsed;
+      }
+    } catch { }
   }
+
   const initial = {
     users: [
       { user_id: 1, name: 'System Administrator', email: 'admin@secureid.gov', password: 'Admin@12345', phone: '+91-9000000000', role: 'admin' },

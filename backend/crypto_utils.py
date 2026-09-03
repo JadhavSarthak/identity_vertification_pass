@@ -39,4 +39,9 @@ def decrypt(ciphertext: str) -> str:
     """Decrypt a base64-encoded ciphertext string and return plaintext."""
     if not ciphertext:
         return ""
-    return _fernet.decrypt(ciphertext.encode()).decode()
+    try:
+        return _fernet.decrypt(ciphertext.encode()).decode()
+    except Exception:
+        # Return string as-is if decryption fails (e.g. key changed or unencrypted string)
+        return ciphertext
+

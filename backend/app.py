@@ -26,11 +26,12 @@ def create_app():
     app = Flask(__name__)
 
     # ── CORS ──────────────────────────────────────────────────────
-    cors_origin = os.environ.get("CORS_ORIGIN", "http://localhost:5173")
+    cors_origin = os.environ.get("CORS_ORIGIN", "*")
     if cors_origin == "*":
-        CORS(app, origins="*")
+        CORS(app, resources={r"/*": {"origins": "*"}}, allow_headers="*", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
     else:
-        CORS(app, origins=[cors_origin], supports_credentials=True)
+        CORS(app, resources={r"/*": {"origins": [cors_origin]}}, supports_credentials=True, allow_headers="*", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
 
     # ── Rate Limiting ─────────────────────────────────────────────
     limiter = Limiter(
