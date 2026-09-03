@@ -22,6 +22,7 @@ def verify(did):
 
     Returns only: { found, name, status, verified_at }
     """
+    did_clean = did.strip().upper()
     db = get_db()
     try:
         row = db.execute("""
@@ -31,13 +32,14 @@ def verify(did):
                 i.verified_at
             FROM identities i
             JOIN users u ON u.user_id = i.user_id
-            WHERE i.did = ?
-        """, (did,)).fetchone()
+            WHERE UPPER(i.did) = ?
+        """, (did_clean,)).fetchone()
 
         # Log the verify check (regardless of outcome)
         identity_row = db.execute(
-            "SELECT identity_id FROM identities WHERE did = ?", (did,)
+            "SELECT identity_id FROM identities WHERE UPPER(did) = ?", (did_clean,)
         ).fetchone()
+
 
         now = datetime.now(timezone.utc).isoformat()
         db.execute(
