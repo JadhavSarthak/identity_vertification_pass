@@ -70,12 +70,17 @@ function parseTokenUser(token) {
     return { userId: parseInt(parts[2], 10), role: parts[3] };
   }
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const rawPayload = token.split('.')[1];
+    if (!rawPayload) return null;
+    const base64 = rawPayload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+    const payload = JSON.parse(atob(padded));
     return { userId: payload.user_id, role: payload.role };
   } catch {
     return null;
   }
 }
+
 
 // ── Generic API Request with Fallback ──────────────────────────────
 async function request(method, path, body = null) {
