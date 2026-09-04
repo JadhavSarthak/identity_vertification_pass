@@ -205,11 +205,8 @@ def view_document(document_id):
         if not doc:
             return jsonify({"error": "Document not found"}), 404
 
-        path = doc["document_path"]
-        if not os.path.isfile(path):
-            return jsonify({"error": "Document file missing from disk"}), 404
-
-        return send_file(path, as_attachment=False)
+        from storage import serve_document
+        return serve_document(doc["document_path"])
     finally:
         db.close()
 

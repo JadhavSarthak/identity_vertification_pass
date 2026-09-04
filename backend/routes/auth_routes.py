@@ -87,12 +87,9 @@ def register():
         )
         identity_id = cur2.lastrowid
 
-        # Save uploaded file with randomised name
-        os.makedirs(UPLOAD_DIR, exist_ok=True)
-        ext = file.filename.rsplit(".", 1)[1].lower()
-        random_filename = f"{uuid.uuid4().hex}.{ext}"
-        file_path = os.path.join(UPLOAD_DIR, random_filename)
-        file.save(file_path)
+        # Save uploaded file via storage helper (Cloud / /tmp fallback)
+        from storage import save_document
+        file_path = save_document(file, file.filename)
 
         # Insert document record
         db.execute(
